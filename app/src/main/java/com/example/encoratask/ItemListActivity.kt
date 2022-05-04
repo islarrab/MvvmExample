@@ -12,8 +12,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.example.encoratask.data.entity.Character
+import com.example.encoratask.data.remote.CharacterService
 
 import com.example.encoratask.dummy.DummyContent
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
  * An activity representing a list of Pings. This activity
@@ -39,6 +44,12 @@ class ItemListActivity : AppCompatActivity() {
         toolbar.title = title
 
         setupRecyclerView(findViewById(R.id.item_list))
+
+        val characterService = CharacterService()
+        GlobalScope.launch {
+            val result = characterService.getCharacters()
+            Timber.i(result.body().toString())
+        }
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
@@ -46,7 +57,7 @@ class ItemListActivity : AppCompatActivity() {
     }
 
     class SimpleItemRecyclerViewAdapter(private val values: List<DummyContent.DummyItem>) :
-            RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
+        RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
 
         private val onClickListener: View.OnClickListener
 
@@ -62,7 +73,7 @@ class ItemListActivity : AppCompatActivity() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_list_content, parent, false)
+                .inflate(R.layout.item_list_content, parent, false)
             return ViewHolder(view)
         }
 
