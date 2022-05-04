@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     ext {
-        kotlin_version = "1.5.31"
+        kotlin_version = "1.6.20"
         navigationVersion = '2.2.0'
         hiltVersion = '2.28.3-alpha'
     }
