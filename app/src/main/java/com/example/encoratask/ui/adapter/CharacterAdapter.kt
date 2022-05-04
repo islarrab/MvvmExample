@@ -14,6 +14,7 @@ class CharacterAdapter(private val listener: CharacterItemListener) :
 
     interface CharacterItemListener {
         fun onClickedCharacter(characterId: Int)
+        fun onLastCharacterVisible()
     }
 
     private val items = ArrayList<Character>()
@@ -32,8 +33,10 @@ class CharacterAdapter(private val listener: CharacterItemListener) :
 
     override fun getItemCount(): Int = items.size
 
-    override fun onBindViewHolder(holder: CharacterViewHolder, position: Int) =
+    override fun onBindViewHolder(holder: CharacterViewHolder, position: Int) {
         holder.bind(items[position])
+        if (position >= items.size - 1) listener.onLastCharacterVisible()
+    }
 }
 
 class CharacterViewHolder(
@@ -41,7 +44,6 @@ class CharacterViewHolder(
     private val listener: CharacterAdapter.CharacterItemListener
 ) : RecyclerView.ViewHolder(itemBinding.root),
     View.OnClickListener {
-
     private lateinit var character: Character
 
     init {

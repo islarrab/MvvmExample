@@ -43,7 +43,7 @@ class ItemListActivity : AppCompatActivity(), CharacterAdapter.CharacterItemList
     }
 
     private fun setupObservers() {
-        viewModel.refreshCharacters(1)
+        viewModel.loadNextPage()
         viewModel.characterListLiveData.observe(this, {
             if (!it.isNullOrEmpty()) adapter.setItems(ArrayList(it))
         })
@@ -54,5 +54,9 @@ class ItemListActivity : AppCompatActivity(), CharacterAdapter.CharacterItemList
             putExtra(ItemDetailFragment.ARG_ITEM_ID, characterId)
         }
         startActivity(intent)
+    }
+
+    override fun onLastCharacterVisible() {
+        viewModel.loadNextPage()
     }
 }
