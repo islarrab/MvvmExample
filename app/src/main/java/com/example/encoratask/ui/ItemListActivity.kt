@@ -1,5 +1,6 @@
 package com.example.encoratask.ui
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -53,7 +54,7 @@ class ItemListActivity : AppCompatActivity(), CharacterAdapter.CharacterItemList
         val intent = Intent(this, ItemDetailActivity::class.java).apply {
             putExtra(ItemDetailFragment.ARG_ITEM_ID, characterId)
         }
-        startActivity(intent)
+        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
     }
 
     override fun onLastCharacterVisible() {
