@@ -1,24 +1,17 @@
-package com.example.encoratask
+package com.example.encoratask.ui
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.widget.NestedScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.appcompat.widget.Toolbar
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.example.encoratask.data.entity.Character
-import com.example.encoratask.data.remote.CharacterService
+import com.example.encoratask.R
 
 import com.example.encoratask.dummy.DummyContent
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import timber.log.Timber
 
 /**
  * An activity representing a list of Pings. This activity
@@ -44,12 +37,6 @@ class ItemListActivity : AppCompatActivity() {
         toolbar.title = title
 
         setupRecyclerView(findViewById(R.id.item_list))
-
-        val characterService = CharacterService()
-        GlobalScope.launch {
-            val result = characterService.getCharacters()
-            Timber.i(result.body().toString())
-        }
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
