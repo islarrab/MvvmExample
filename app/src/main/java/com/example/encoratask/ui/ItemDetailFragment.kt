@@ -1,14 +1,18 @@
 package com.example.encoratask.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.encoratask.R
-import com.example.encoratask.dummy.DummyContent
+import com.example.encoratask.viewmodel.CharacterViewModel
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.imageview.ShapeableImageView
 
 /**
  * A fragment representing a single Item detail screen.
@@ -18,32 +22,60 @@ import com.example.encoratask.dummy.DummyContent
  */
 class ItemDetailFragment : Fragment() {
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
-    private var item: DummyContent.DummyItem? = null
+    private val viewModel: CharacterViewModel by lazy {
+        ViewModelProvider(this)[CharacterViewModel::class.java]
+    }
+
+    private var id: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Set title to an empty string, it's going to be updated with the character's name
+        // once the character loads
+        val toolbar = activity?.findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)
+        toolbar?.title = null
+
         arguments?.let {
             if (it.containsKey(ARG_ITEM_ID)) {
-                // Load the dummy content specified by the fragment
-                // arguments. In a real-world scenario, use a Loader
-                // to load content from a content provider.
-                item = DummyContent.ITEM_MAP[it.getString(ARG_ITEM_ID)]
-                activity?.findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.title = item?.content
+                id = it.getInt(ARG_ITEM_ID)
             }
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val rootView = inflater.inflate(R.layout.item_detail, container, false)
 
+        val toolbar = activity?.findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)
+        val imageView = rootView.findViewById<ShapeableImageView>(R.id.item_image)
+        val speciesView = rootView.findViewById<TextView>(R.id.item_species)
+        val typeView = rootView.findViewById<TextView>(R.id.item_type)
+        val genderView = rootView.findViewById<TextView>(R.id.item_gender)
+        val statusView = rootView.findViewById<TextView>(R.id.item_status)
+
         // Show the dummy content as text in a TextView.
-        item?.let {
-            rootView.findViewById<TextView>(R.id.item_detail).text = it.details
+        id?.let {
+            viewModel.refreshCharacter(it)
+            viewModel.characterLiveData.observe(this) { response ->
+                if (response == null) {
+                    Toast.makeText(context, "Error on network call", Toast.LENGTH_SHORT)
+                        .show()
+                    return@observe
+                }
+
+                toolbar?.title = response.name
+                speciesView.text = response.species
+                typeView.text = response.type
+                genderView.text = response.gender
+                statusView.text = response.status
+
+                Glide.with(this@ItemDetailFragment)
+                    .load(response.image)
+                    .into(imageView)
+            }
         }
 
         return rootView

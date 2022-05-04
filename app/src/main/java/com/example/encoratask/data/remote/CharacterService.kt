@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class CharacterService {
 
-    // TODO: this should be resolved with dependency injection
+    // TODO: this should be resolved using dependency injection
     private val gson: Gson = GsonBuilder().create()
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl("https://rickandmortyapi.com/api/")

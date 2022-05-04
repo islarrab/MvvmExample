@@ -9,9 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import com.example.encoratask.R
 
 import com.example.encoratask.dummy.DummyContent
+import com.example.encoratask.viewmodel.CharacterListViewModel
 
 /**
  * An activity representing a list of Pings. This activity
@@ -23,10 +25,9 @@ import com.example.encoratask.dummy.DummyContent
  */
 class ItemListActivity : AppCompatActivity() {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
+    private val viewModel: CharacterListViewModel by lazy {
+        ViewModelProvider(this)[CharacterListViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +53,7 @@ class ItemListActivity : AppCompatActivity() {
             onClickListener = View.OnClickListener { v ->
                 val item = v.tag as DummyContent.DummyItem
                 val intent = Intent(v.context, ItemDetailActivity::class.java).apply {
-                    putExtra(ItemDetailFragment.ARG_ITEM_ID, item.id)
+                    putExtra(ItemDetailFragment.ARG_ITEM_ID, item.id.toInt())
                 }
                 v.context.startActivity(intent)
             }

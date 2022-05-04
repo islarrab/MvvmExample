@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">EncoraTask</string>
     <string name="title_item_detail">Item Detail</string>
+    <string name="species">Species</string>
+    <string name="type">Type</string>
+    <string name="gender">gender</string>
+    <string name="status">status</string>
 </resources>
