@@ -3,16 +3,10 @@ package com.example.encoratask.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
-import com.example.encoratask.R
-
-import com.example.encoratask.dummy.DummyContent
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.encoratask.databinding.ActivityItemListBinding
+import com.example.encoratask.ui.adapter.CharacterAdapter
 import com.example.encoratask.viewmodel.CharacterListViewModel
 
 /**
@@ -23,64 +17,42 @@ import com.example.encoratask.viewmodel.CharacterListViewModel
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-class ItemListActivity : AppCompatActivity() {
-
+class ItemListActivity : AppCompatActivity(), CharacterAdapter.CharacterItemListener {
     private val viewModel: CharacterListViewModel by lazy {
         ViewModelProvider(this)[CharacterListViewModel::class.java]
     }
 
+    private lateinit var binding: ActivityItemListBinding
+    private lateinit var adapter: CharacterAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_item_list)
+        binding = ActivityItemListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        toolbar.title = title
+        setSupportActionBar(binding.toolbar)
 
-        setupRecyclerView(findViewById(R.id.item_list))
+        setupRecyclerView()
+        setupObservers()
     }
 
-    private fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.adapter = SimpleItemRecyclerViewAdapter(DummyContent.ITEMS)
+    private fun setupRecyclerView() {
+        adapter = CharacterAdapter(this)
+        binding.itemList.layoutManager = LinearLayoutManager(this)
+        binding.itemList.adapter = adapter
     }
 
-    class SimpleItemRecyclerViewAdapter(private val values: List<DummyContent.DummyItem>) :
-        RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
+    private fun setupObservers() {
+        viewModel.refreshCharacters(1)
+        viewModel.characterListLiveData.observe(this, {
+            if (!it.isNullOrEmpty()) adapter.setItems(ArrayList(it))
+        })
+    }
 
-        private val onClickListener: View.OnClickListener
-
-        init {
-            onClickListener = View.OnClickListener { v ->
-                val item = v.tag as DummyContent.DummyItem
-                val intent = Intent(v.context, ItemDetailActivity::class.java).apply {
-                    putExtra(ItemDetailFragment.ARG_ITEM_ID, item.id.toInt())
-                }
-                v.context.startActivity(intent)
-            }
+    override fun onClickedCharacter(characterId: Int) {
+        val intent = Intent(this, ItemDetailActivity::class.java).apply {
+            putExtra(ItemDetailFragment.ARG_ITEM_ID, characterId)
         }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_list_content, parent, false)
-            return ViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val item = values[position]
-            holder.idView.text = item.id
-            holder.contentView.text = item.content
-
-            with(holder.itemView) {
-                tag = item
-                setOnClickListener(onClickListener)
-            }
-        }
-
-        override fun getItemCount() = values.size
-
-        inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val idView: TextView = view.findViewById(R.id.id_text)
-            val contentView: TextView = view.findViewById(R.id.content)
-        }
+        startActivity(intent)
     }
 }

@@ -8,9 +8,10 @@ android {
     compileSdkVersion 31
     buildToolsVersion "31.0.0"
 
-    buildFeatures {
-        dataBinding = true
+    viewBinding {
+        enabled = true
     }
+
     defaultConfig {
         applicationId "com.example.encoratask"
         minSdkVersion 22
