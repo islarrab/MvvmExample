@@ -13,7 +13,7 @@ class CharacterAdapter(private val listener: CharacterItemListener) :
     RecyclerView.Adapter<CharacterViewHolder>() {
 
     interface CharacterItemListener {
-        fun onClickedCharacter(characterId: Int)
+        fun onClickedCharacter(view: View?, characterId: Int)
         fun onLastCharacterVisible()
     }
 
@@ -61,7 +61,7 @@ class CharacterViewHolder(
     }
 
     override fun onClick(v: View?) {
-        listener.onClickedCharacter(character.id)
+        listener.onClickedCharacter(v, character.id)
     }
 }
 
